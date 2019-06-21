@@ -1,0 +1,65 @@
+.EQU LED_PORT		=   	0X40
+.EQU SWITCH_PORT	=   	0X20
+.EQU UPPER_SWITCH 	=		0x21
+.EQU SSEG			= 		0x81
+.EQU BUTTONS		=		0xFF
+
+.EQU BIT_0_MASK = 0X01
+.EQU BIT_1_MASK = 0X02
+.EQU BIT_2_MASK = 0X04
+.EQU BIT_3_MASK = 0X08
+.EQU BIT_4_MASK = 0X10
+
+.CSEG
+.ORG 0x01
+				MOV		R6, 1
+				MOV		R5, 0x01
+				MOV		R4, 0
+start:			MOV		R0, 0xFF
+				OUT		R0, LED_PORT
+loop:			IN		R1, UPPER_SWITCH		;A
+				IN		R2, SWITCH_PORT			;B
+				IN		R3, BUTTONS
+				TEST	R3, BIT_3_MASK
+				BRNE	BTNL_PRESSED
+				TEST	R3, BIT_2_MASK
+				BRNE	BTNU_PRESSED
+				TEST	R3, BIT_1_MASK
+				BRNE	BTNR_PRESSED
+				TEST	R3, BIT_0_MASK
+				BRNE	BTND_PRESSED
+				BRN		loop
+			
+BTNL_PRESSED:	ADD		R1, R2
+				OUT		R4, LED_PORT
+				OUT		R1, SSEG
+				BRCC	loop
+				OUT		R5, LED_PORT
+				BRN		loop
+								
+
+BTNU_PRESSED:	AND		R1, R2
+				OUT		R4, LED_PORT
+				OUT		R1, SSEG
+				BRCC	loop
+				OUT		R5, LED_PORT
+				BRN		loop
+				
+
+BTNR_PRESSED:	SUB		R1, R2
+				OUT		R4, LED_PORT
+				OUT		R1, SSEG
+				BRCC	loop
+				OUT		R5, LED_PORT
+				BRN		loop
+				
+
+BTND_PRESSED:	OR		R1, R2
+				OUT		R4, LED_PORT
+				OUT		R1, SSEG
+				BRCC	loop
+				OUT		R5, LED_PORT
+				BRN		loop
+				
+			
+			

@@ -1,0 +1,14 @@
+.EQU	SWITCHES = 0x20
+.EQU	LEDS = 0x40
+
+.CSEG
+.ORG 0x01
+
+		MOV		R11, 0xFF
+Loop:	IN		R10, SWITCHES
+		EXOR	R10, R11
+		OUT		R10, LEDS
+		BRN		Loop
+		
+		
+	
